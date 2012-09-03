@@ -34,7 +34,7 @@ public class CollectingDependency
 		}
 		catch(SQLException ex)
 		{
-			//error message
+			ex.printStackTrace();
 		}
 	}
 }

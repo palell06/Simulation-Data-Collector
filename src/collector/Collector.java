@@ -25,13 +25,13 @@ public class Collector {
 	private Date last_seen_TS;
 	private int status_id;
 	
-	public Collector(int id)
+	public Collector()
 	{
 		Runtime runTime = Runtime.getRuntime();
 		this.Collecting_High_Limit = runTime.availableProcessors()*Number_Of_Threads_Per_Processor;
 		this.Collecting_Low_Limit = Collecting_High_Limit*(int)(3.0f/4.0f);
 		
-		System.out.println("Starting simulator-thread...");
+		System.out.println("Starting collector-thread...");
 		new Thread(new Collecting()).start();
 	}
 	
@@ -52,7 +52,7 @@ public class Collector {
 	{
 		new Settings();
 		AliveMessenger.getInstance();
-		//new Collector();
+		new Collector();
 	}
 	
 	public ArrayList<CollectingRequest> getCollectingRequests(int limit)
@@ -63,23 +63,29 @@ public class Collector {
 		
 		try
 		{
-			String query = "SELECT ";
+			int status_id = Status.getInstance().getStatusID(CollectingRequest.Request_Pending);
+			
+			String query = "SELECT ID FROM CRAWLER_QUEUE_OBJECTS WHERE STATUS_ID = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setInt(1, status_id);
 			ResultSet set = statement.executeQuery();
 			
 			while(set.next())
 			{
 				int id = set.getInt(1);
-				int type_id = set.getInt(2);
-				int longitude = set.getInt(3);
-				int latitude = set.getInt(4);
-				java.util.Date time_from = new Date(set.getLong(5));
-				java.util.Date time_to = new Date(set.getLong(6));
 				
-				crawlerRequests.add(new CollectingRequest(id, type_id, longitude, latitude, time_from, time_to));
+				crawlerRequests.add(new CollectingRequest(id));
 			}
 		}
 		catch(SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+		catch(StatusIdNotFoundException ex)
+		{
+			ex.printStackTrace();
+		}
+		catch(CollectorRequestNotFoundException ex)
 		{
 			ex.printStackTrace();
 		}
@@ -115,7 +121,7 @@ public class Collector {
 	{
 		public void run()
 		{		
-			int collecting_id = Settings.getSimulatorID();
+			int collecting_id = Settings.getCollectorID();
 			System.out.println("My collector-id is :"+collecting_id);
 			
 			while(active)
@@ -125,7 +131,7 @@ public class Collector {
 				collectData();
 			}
 			
-			System.out.println("Turning off simulator...");
+			System.out.println("Turning off collector...");
 			
 		}
 		
@@ -142,8 +148,8 @@ public class Collector {
 				
 				if(requests.size() > 0)
 				{
-					System.out.println("Number of simulation requests recieved from database: "+requests.size());
-					System.out.println("Starting "+requests.size()+" new simulation threads..");
+					System.out.println("Number of collecting requests recieved from database: "+requests.size());
+					System.out.println("Starting "+requests.size()+" new collecting threads..");
 					ExecutorService service = Executors.newFixedThreadPool(requests.size());
 					
 					for(int i = 0; i<requests.size(); i++)

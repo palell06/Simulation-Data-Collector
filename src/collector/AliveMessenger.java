@@ -49,37 +49,31 @@ public class AliveMessenger extends AbstractAction {
 
 	private void update(){
 		String query = "";
-		if (Settings.getSimulatorID() == -1){
+		if (Settings.getCollectorID() == -1){
 			// Insert
-			query = "INSERT INTO simulator(" +
-					"status_id, " + 
-					"ip_adress, " +
-					"last_seen_ts, " +
-					"url) " +
-					"VALUES(?,?,extract(epoch from now()),NULL) RETURNING *";
+			query = "INSERT INTO Crawler(" +
+					"status_id, " +
+					"last_seen_ts ) " +
+					"VALUES(?,extract(epoch from now())) RETURNING *";
 			try {
 				PreparedStatement statement = Settings.getDBC().prepareStatement(query);
 				statement.setInt(1, 1);
-				statement.setString(2, getIp());
 				ResultSet res = statement.executeQuery();
 				res.next();
-				Settings.setSimulatorID(res.getInt("id"));
+				Settings.setCollectorID(res.getInt("id"));
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else {
-			query = "UPDATE simulator SET " +
+			query = "UPDATE crawler SET " +
 					"status_id = ?, " +
-					"ip_adress = ?, " +
-					"last_seen_ts = extract(epoch from now()), " +
-					"url = NULL " + 
+					"last_seen_ts = extract(epoch from now())" +
 					"WHERE id = ?";
 			try {
 				PreparedStatement statement = Settings.getDBC().prepareStatement(query);
 				statement.setInt(1, 1);
-				statement.setString(2, getIp());
-				statement.setInt(3, Settings.getSimulatorID());
+				statement.setInt(2, Settings.getCollectorID());
 				statement.executeUpdate();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

@@ -20,7 +20,7 @@ public class Settings {
 	 * Constructors
 	 */
 	public Settings(){
-		this("Simulator.properties");
+		this("Collector.properties");
 	}
 	
 	public Settings(String $filename){
@@ -104,18 +104,18 @@ public class Settings {
 	 * SimulatorID is the ID given to the simulator instance by the database
 	 * The setter will only be used by the AliveMessenger after the first reporting.
 	 */
-	public static int getSimulatorID(){
+	public static int getCollectorID(){
 		int result;
 		try {
-			result = Integer.parseInt(configFile.getProperty("SIMULATOR_ID"));
+			result = Integer.parseInt(configFile.getProperty("COLLECTOR_ID"));
 		} catch (NumberFormatException ex) {
             return -1;
         }
 		return result;
 	}
 	
-	public static void setSimulatorID(int id){
-		configFile.setProperty("SIMULATOR_ID", Integer.toString(id));
+	public static void setCollectorID(int id){
+		configFile.setProperty("COLLECTOR_ID", Integer.toString(id));
 		try {
 			configFile.store(new FileWriter(file),null);
 		} catch (IOException e) {

@@ -86,7 +86,7 @@ public class CollectingRequest implements Runnable
 			
 			int statusID = Status.getInstance().getStatusID(Request_Processing);
 			
-			String query = "UPDATE TABLE Simulator_Queue_Objects SET Status_ID=? WHERE ID=?";
+			String query = "UPDATE TABLE crawler_queue_bjects SET status_id=? WHERE id=?";
 			
 			PreparedStatement statement =  connection.prepareStatement(query);
 			statement.setInt(1, statusID);
