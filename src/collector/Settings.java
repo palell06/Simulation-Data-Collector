@@ -20,7 +20,7 @@ public class Settings {
 	 * Constructors
 	 */
 	public Settings(){
-		this("Collector.properties");
+		this("Crawler.properties");
 	}
 	
 	public Settings(String $filename){

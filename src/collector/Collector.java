@@ -1,5 +1,8 @@
 package collector;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -9,7 +12,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Collector {
+public class Collector extends KeyAdapter {
 
 	public static final String Collector_Work_Status_High = "High";
 	public static final String Collector_Work_Status_Medium = "Medium";
@@ -32,7 +35,9 @@ public class Collector {
 		this.Collecting_Low_Limit = Collecting_High_Limit*(int)(3.0f/4.0f);
 		
 		System.out.println("Starting collector-thread...");
-		new Thread(new Collecting()).start();
+		//new Thread(new Collecting()).start();
+		
+		WeatherParser.getWeatherData("Norway", "Telemark", "Sauherad", "Gvarv");
 	}
 	
 	private void sleep()
@@ -166,4 +171,13 @@ public class Collector {
 			}
 		}
 	}
+	
+	public void keyReleased(KeyEvent event)
+	{
+		if(event.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			active = false;
+		}
+	}
+
 }
