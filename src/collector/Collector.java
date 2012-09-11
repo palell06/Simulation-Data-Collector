@@ -24,9 +24,6 @@ public class Collector extends KeyAdapter {
 	private final int Number_Of_Threads_Per_Processor = 10;
 	
 	private boolean active = true;
-	private int id;
-	private Date last_seen_TS;
-	private int status_id;
 	
 	public Collector()
 	{
