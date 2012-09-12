@@ -34,7 +34,7 @@ public class Collector extends KeyAdapter {
 		System.out.println("Starting collector-thread...");
 		//new Thread(new Collecting()).start();
 		
-		WeatherParser.getWeatherData("Norway", "Telemark", "Sauherad", "Gvarv");
+		WeatherParser.getWeatherData("Norway", "Nordland", "Narvik", "Narvik");
 	}
 	
 	private void sleep()
